@@ -41,6 +41,7 @@ flake8-pytest-style = "^1.6"
 flake8-logging-format = "^0.7"
 nitpick = "^0.32"
 doc8 = "^1.0"
+requests-cache = "0.9.8"
 
 pytest = "^7.2"
 pytest-django = "^4.5"
