@@ -60,7 +60,7 @@ ProfileAssertion = Callable[[User, ProfileData], None]
 
 
 @pytest.fixture
-def assert_user_profile() -> ProfileAssertion:
+def assert_user_profile_correct() -> ProfileAssertion:
     def _assert(user: User, profile_data: ProfileData):
         assert user.first_name == profile_data['first_name']
         assert user.last_name == profile_data['last_name']

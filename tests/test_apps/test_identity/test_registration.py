@@ -32,7 +32,7 @@ def test_valid_registration(
     user_email: str,
     user_password: str,
     registration_data,
-    assert_user_profile: 'ProfileAssertion',
+    assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     response = client.post('/identity/registration', data=registration_data)
     assert response.status_code == HTTPStatus.FOUND, (
@@ -40,7 +40,7 @@ def test_valid_registration(
     )
     user = User.objects.all().get(email=user_email)
     assert user.check_password(user_password)
-    assert_user_profile(user, registration_data)
+    assert_user_profile_correct(user, registration_data)
 
 
 @pytest.mark.parametrize(
@@ -53,10 +53,8 @@ def test_registration_missing_required_field(
     registration_data,
     missing_field: str,
 ) -> None:
-    response = client.post(
-        '/identity/registration',
-        data=registration_data | {missing_field: ''},
-    )
+    request_data = registration_data | {missing_field: ''}
+    response = client.post('/identity/registration', data=request_data)
     assert response.status_code == HTTPStatus.OK
     assert missing_field in response.context['form'].errors
     assert not User.objects.filter(email=user_email).exists()
