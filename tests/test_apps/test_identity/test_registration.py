@@ -1,11 +1,10 @@
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from django.test import Client
 import pytest
+from django.test import Client
 
 from server.apps.identity.models import User
-
 
 pytestmark = pytest.mark.django_db
 
@@ -14,12 +13,13 @@ if TYPE_CHECKING:
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
 
-@pytest.fixture
+@pytest.fixture()
 def registration_data(
     user_email: str,
     user_password: str,
     user_profile_data: 'ProfileData',
 ):
+    """Raw data for RegistrationForm."""
     return user_profile_data | {
         'email': user_email,
         'password1': user_password,
@@ -34,6 +34,7 @@ def test_valid_registration(
     registration_data,
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
+    """Tests successful registration."""
     response = client.post('/identity/registration', data=registration_data)
     assert response.status_code == HTTPStatus.FOUND, (
         response.context['form'].errors
@@ -53,6 +54,7 @@ def test_registration_missing_required_field(
     registration_data,
     missing_field: str,
 ) -> None:
+    """Tests RegistrationForm when invalid data provided."""
     request_data = registration_data | {missing_field: ''}
     response = client.post('/identity/registration', data=request_data)
     assert response.status_code == HTTPStatus.OK
