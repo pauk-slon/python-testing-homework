@@ -23,7 +23,7 @@ class ProfileData(TypedDict, total=False):
 
 
 @final
-class ProfileDataFactory(Protocol):
+class ProfileDataFactory(Protocol):  # type: ignore[misc]
     """A factory to generate `ProfileData`."""
 
     def __call__(self, **fields: Unpack[ProfileData]) -> ProfileData:
