@@ -32,6 +32,7 @@ def test_inactive_user_login(
     user_factory: UserFactory,
     user_password: str,
 ):
+    """An inactive user should fail when loging in."""
     user = user_factory(password=user_password, is_active=False)
     request_data = {'username': user.email, 'password': user_password}
     response = client.post('/identity/login', data=request_data)
