@@ -96,9 +96,15 @@ def user_email(mf) -> str:
 
 
 @pytest.fixture()
-def user_password(mf) -> str:
+def default_password(mf) -> str:
     """Password of the current user."""
     return mf('person.password')
+
+
+@pytest.fixture()
+def user_password(default_password) -> str:
+    """Password of the current user."""
+    return default_password
 
 
 @final
@@ -110,9 +116,21 @@ class UserFactory(Protocol):  # type: ignore[misc]
 
 
 @pytest.fixture()
-def user_factory(fakery: Factory[User], faker_seed: int) -> UserFactory:
+def user_factory(
+    fakery: Factory[User],
+    faker_seed: int,
+    default_password: str,
+) -> UserFactory:
     """Creates a factory to generate a user instance."""
-    return fakery.m(User, seed=faker_seed)
+    def factory(**fields):
+        password = fields.pop('password', default_password)
+        return fakery.make(
+            User,
+            seed=faker_seed,
+            fields=fields,
+            pre_save=[lambda _user: _user.set_password(password)],
+        )
+    return factory
 
 
 @pytest.fixture()
