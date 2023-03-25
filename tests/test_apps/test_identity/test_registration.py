@@ -10,6 +10,7 @@ pytestmark = pytest.mark.django_db
 
 
 if TYPE_CHECKING:
+    from tests.plugins.django_form_view import FormValidAssertion
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
 
@@ -29,18 +30,15 @@ def registration_data(
 
 def test_valid_registration(
     client: Client,
-    user_email: str,
-    user_password: str,
     registration_data,
+    assert_form_valid: 'FormValidAssertion',
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Providing valid registration data leads to successful registration."""
     response = client.post('/identity/registration', data=registration_data)
-    assert response.status_code == HTTPStatus.FOUND, (
-        response.context['form'].errors
-    )
-    user = User.objects.all().get(email=user_email)
-    assert user.check_password(user_password)
+    assert_form_valid(response, '/identity/login')
+    user = User.objects.get(email=registration_data['email'])
+    assert user.check_password(registration_data['password1'])
     assert_user_profile_correct(user, registration_data)
 
 

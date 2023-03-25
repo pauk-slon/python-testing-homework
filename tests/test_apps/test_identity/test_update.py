@@ -7,6 +7,7 @@ from django.test import Client
 from server.apps.identity.models import User
 
 if TYPE_CHECKING:
+    from tests.plugins.django_form_view import FormValidAssertion
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
 
@@ -17,16 +18,12 @@ def test_valid_update(
     admin_client: Client,
     admin_user: User,
     user_profile_data: 'ProfileData',
+    assert_form_valid: 'FormValidAssertion',
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Tests UserUpdateForm when valid data provided."""
-    response = admin_client.post(
-        '/identity/update',
-        data=user_profile_data,
-    )
-    assert response.status_code == HTTPStatus.FOUND, (
-        response.context['form'].errors
-    )
+    response = admin_client.post('/identity/update', data=user_profile_data)
+    assert_form_valid(response, '/identity/update')
     admin_user.refresh_from_db()
     assert_user_profile_correct(admin_user, user_profile_data)
 

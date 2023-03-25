@@ -1,4 +1,4 @@
-from http import HTTPStatus
+from typing import TYPE_CHECKING
 
 import pytest
 from django.test.client import Client
@@ -6,11 +6,12 @@ from django.test.client import Client
 pytestmark = pytest.mark.django_db
 
 
-def test_logout(user_client: Client):
+if TYPE_CHECKING:
+    from tests.plugins.django_form_view import FormValidAssertion
+
+
+def test_logout(user_client: Client, assert_form_valid: 'FormValidAssertion'):
     """Logout should be always successful."""
     response = user_client.post('/identity/logout')
-    assert response.status_code == HTTPStatus.FOUND, (
-        response.context['form'].errors
-    )
-    assert response['location'] == '/'
+    assert_form_valid(response, '/')
     assert not user_client.session.session_key

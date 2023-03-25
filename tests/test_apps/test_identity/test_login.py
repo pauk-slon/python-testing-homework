@@ -10,6 +10,7 @@ pytestmark = pytest.mark.django_db
 
 
 if TYPE_CHECKING:
+    from tests.plugins.django_form_view import FormValidAssertion
     from tests.plugins.identity.user import UserFactory
 
 
@@ -17,15 +18,12 @@ def test_valid_credentials_login(
     client: Client,
     user: User,
     user_password: str,
+    assert_form_valid: 'FormValidAssertion',
 ):
     """Providing valid credentials should lead to a successful login."""
     request_data = {'username': user.email, 'password': user_password}
     response = client.post('/identity/login', data=request_data)
-    assert response.status_code == HTTPStatus.FOUND, (
-        response.context['form'].errors
-    )
-    assert response['location'] == '/pictures/dashboard'
-    assert client.session.session_key
+    assert_form_valid(response, '/pictures/dashboard')
 
 
 def test_inactive_user_login(
