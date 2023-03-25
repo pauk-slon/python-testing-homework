@@ -725,18 +725,18 @@ test = ["pytest", "pytest-cov", "pytest-django"]
 
 [[package]]
 name = "django-fakery"
-version = "4.1.0"
+version = "3.3.1"
 description = "A model instances generator for Django"
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.4"
 files = [
-    {file = "django-fakery-4.1.0.tar.gz", hash = "sha256:6a4831efd0fb871c58d555c97a652c03470a89521a4c4f85f61d94bf620228fa"},
-    {file = "django_fakery-4.1.0-py2.py3-none-any.whl", hash = "sha256:7d7e95c223ec2b35a0a3ae7b3d325afa9d5e37b61a12e99959c21914dbb6b51c"},
+    {file = "django-fakery-3.3.1.tar.gz", hash = "sha256:fe2857afa4c1e620f8a54fd5db50af2f06a28f330ed29a3c611484832d8b4fdb"},
+    {file = "django_fakery-3.3.1-py2.py3-none-any.whl", hash = "sha256:9f8cb766d031ad3cef1e28d75e3cdeb1665e36148c17ebf629c8bc69775f316f"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+Django = ">=2.0"
 Faker = ">=10.0,<11.0"
 six = ">=1.10.1"
 
@@ -1475,14 +1475,14 @@ zoneinfo = ["backports.zoneinfo (>=0.2.1)", "tzdata (>=2022.7)"]
 
 [[package]]
 name = "identify"
-version = "2.5.21"
+version = "2.5.22"
 description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.21-py2.py3-none-any.whl", hash = "sha256:69edcaffa8e91ae0f77d397af60f148b6b45a8044b2cc6d99cafa5b04793ff00"},
-    {file = "identify-2.5.21.tar.gz", hash = "sha256:7671a05ef9cfaf8ff63b15d45a91a1147a03aaccb2976d4e9bd047cbbc508471"},
+    {file = "identify-2.5.22-py2.py3-none-any.whl", hash = "sha256:f0faad595a4687053669c112004178149f6c326db71ee999ae4636685753ad2f"},
+    {file = "identify-2.5.22.tar.gz", hash = "sha256:f7a93d6cf98e29bd07663c60728e7a4057615068d7a639d132dc883b2d54d31e"},
 ]
 
 [package.extras]
@@ -2553,14 +2553,14 @@ unidecode = ["Unidecode (>=1.1.1)"]
 
 [[package]]
 name = "pytz"
-version = "2022.7.1"
+version = "2023.2"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pytz-2022.7.1-py2.py3-none-any.whl", hash = "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"},
-    {file = "pytz-2022.7.1.tar.gz", hash = "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0"},
+    {file = "pytz-2023.2-py2.py3-none-any.whl", hash = "sha256:8a8baaf1e237175b02f5c751eea67168043a749c843989e2b3015aa1ad9db68b"},
+    {file = "pytz-2023.2.tar.gz", hash = "sha256:a27dcf612c05d2ebde626f7d506555f10dfc815b3eddccfaadfc7d99b11c9a07"},
 ]
 
 [[package]]
@@ -3340,4 +3340,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "3.9.15"
-content-hash = "4041f9eb1469c1cac08a33ee1945ba4d2a458524a305322e1c1cbe31de440b04"
+content-hash = "c194d14e747a67d90a310b16761cfcccd0a9590a87fea0df0ec7e84da53c544b"

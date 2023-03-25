@@ -7,11 +7,16 @@ pytestmark = pytest.mark.django_db
 
 
 if TYPE_CHECKING:
-    from tests.plugins.django_form_view import FormValidAssertion
+    from tests.plugins.django_form_view import (
+        FormValidAssertion,
+        FormViewResponse,
+    )
 
 
 def test_logout(user_client: Client, assert_form_valid: 'FormValidAssertion'):
     """Logout should be always successful."""
-    response = user_client.post('/identity/logout')
+    response: 'FormViewResponse' = (
+        user_client.post('/identity/logout')  # type: ignore[assignment]
+    )
     assert_form_valid(response, '/')
     assert not user_client.session.session_key

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from tests.plugins.django_form_view import (
         FormNotValidAssertion,
         FormValidAssertion,
+        FormViewResponse,
     )
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
@@ -24,7 +25,10 @@ def test_valid_update(
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Tests UserUpdateForm when valid data provided."""
-    response = user_client.post('/identity/update', data=user_profile_data)
+    response: 'FormViewResponse' = user_client.post(  # type: ignore[assignment]
+        '/identity/update',
+        data=user_profile_data,
+    )
     assert_form_valid(response, '/identity/update')
     user.refresh_from_db()
     assert_user_profile_correct(user, user_profile_data)
@@ -40,7 +44,10 @@ def test_update_missing_required_field(
 ) -> None:
     """Tests UserUpdateForm when invalid data provided."""
     request_data = user_profile_data | {missing_field: ''}
-    response = user_client.post('/identity/update', data=request_data)
+    response: 'FormViewResponse' = user_client.post(  # type: ignore[assignment]
+        '/identity/update',
+        data=request_data,
+    )
     assert_form_not_valid(response, missing_field)
     value_before = getattr(user, missing_field)
     user.refresh_from_db()

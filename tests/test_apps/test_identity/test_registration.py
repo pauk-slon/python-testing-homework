@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from tests.plugins.django_form_view import (
         FormNotValidAssertion,
         FormValidAssertion,
+        FormViewResponse,
     )
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
@@ -37,7 +38,10 @@ def test_valid_registration(
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Providing valid registration data leads to successful registration."""
-    response = client.post('/identity/registration', data=registration_data)
+    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+        '/identity/registration',
+        data=registration_data,
+    )
     assert_form_valid(response, '/identity/login')
     user = User.objects.get(email=registration_data['email'])
     assert user.check_password(registration_data['password1'])
@@ -56,7 +60,10 @@ def test_registration_missing_required_field(
 ) -> None:
     """Missing any required field should fail registration process."""
     request_data = registration_data | {missing_field: ''}
-    response = client.post('/identity/registration', data=request_data)
+    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+        '/identity/registration',
+        data=request_data,
+    )
     assert_form_not_valid(response, missing_field)
     assert not User.objects.exists()
 
@@ -74,6 +81,9 @@ def test_registration_invalid_field(
 ) -> None:
     """Invalid field value should fail registration process."""
     request_data = registration_data | {invalid_field: invalid_value}
-    response = client.post('/identity/registration', data=request_data)
+    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+        '/identity/registration',
+        data=request_data,
+    )
     assert_form_not_valid(response, invalid_field)
     assert not User.objects.exists()

@@ -122,10 +122,10 @@ def user_factory(
     """Creates a factory to generate a user instance."""
     def factory(**fields):
         password = fields.pop('password', default_password)
-        return fakery.make(
-            User,
-            seed=faker_seed,
+        return fakery.make(  # type: ignore[call-overload]
+            model=User,
             fields=fields,
+            seed=faker_seed,
             pre_save=[lambda _user: _user.set_password(password)],
         )
     return factory
