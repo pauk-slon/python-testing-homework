@@ -24,6 +24,6 @@ def test_favourite_picture_list(
     response = user_client.get('/pictures/favourites')
     assert response.status_code == HTTPStatus.OK
     object_list = list(
-        response.context_data['object_list']  # type: ignore[attr-defined]
+        response.context_data['object_list'],  # type: ignore[attr-defined]
     )
     assert object_list == [owned_favourite_picture]
