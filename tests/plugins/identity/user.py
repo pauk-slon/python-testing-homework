@@ -95,7 +95,7 @@ def user_email(mf) -> str:
 
 @pytest.fixture()
 def default_password(mf) -> str:
-    """Password of the current user."""
+    """Default password for user factory."""
     return mf('person.password')
 
 
