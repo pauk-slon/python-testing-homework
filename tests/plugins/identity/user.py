@@ -2,6 +2,7 @@ import datetime
 from typing import Callable, Protocol, TypedDict, final
 
 import pytest
+from django_fakery.faker_factory import Factory
 from mimesis.schema import Field, Schema
 from typing_extensions import Unpack
 
@@ -31,9 +32,9 @@ class ProfileDataFactory(Protocol):  # type: ignore[misc]
 
 
 @pytest.fixture()
-def mf() -> Field:
+def mf(faker_seed: int) -> Field:
     """Returns the current mimesis `Field`."""
-    return Field()
+    return Field(seed=faker_seed)
 
 
 @pytest.fixture()
@@ -84,17 +85,49 @@ def _assert_user_profile_correct(user: User, profile_data: ProfileData):
 
 @pytest.fixture()
 def assert_user_profile_correct() -> ProfileAssertion:
-    """Checks `ProfileData` corresponds to the given `User` instance."""
+    """Checks if `ProfileData` corresponds to the given `User` instance."""
     return _assert_user_profile_correct
 
 
 @pytest.fixture()
 def user_email(mf) -> str:
-    """Generates a new email."""
-    return mf('person.email', unique=True)
+    """Email of the current user."""
+    return mf('person.email')
 
 
 @pytest.fixture()
 def user_password(mf) -> str:
-    """Generates a password."""
+    """Password of the current user."""
     return mf('person.password')
+
+
+@final
+class UserFactory(Protocol):  # type: ignore[misc]
+    """A factory to generate a `User` instance."""
+
+    def __call__(self, **fields) -> User:
+        """Profile data factory protocol."""
+
+
+@pytest.fixture()
+def user_factory(fakery: Factory[User], faker_seed: int) -> UserFactory:
+    """Creates a factory to generate a user instance."""
+    return fakery.m(User, seed=faker_seed)
+
+
+@pytest.fixture()
+def user(
+    user_factory: UserFactory,
+    user_email: str,
+    user_password: str,
+) -> User:
+    """The current user.
+
+    The fixtures `user_email` and `user_password` are used
+    as their email and password correspondingly.
+    """
+    return user_factory(
+        email=user_email,
+        password=user_password,
+        is_active=True,
+    )
