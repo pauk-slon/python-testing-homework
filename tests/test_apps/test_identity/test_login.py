@@ -25,6 +25,7 @@ def test_valid_credentials_login(
         response.context['form'].errors
     )
     assert response['location'] == '/pictures/dashboard'
+    assert client.session.session_key
 
 
 def test_inactive_user_login(
