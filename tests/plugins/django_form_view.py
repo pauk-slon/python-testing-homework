@@ -24,3 +24,19 @@ def assert_form_valid() -> FormValidAssertion:
         )
         assert response['location'] == redirect_url
     return factory
+
+
+class FormNotValidAssertion(Protocol):  # type: ignore[misc]
+    """Check if a FormView processed the form with errors."""
+
+    def __call__(self, response: FormViewResponse, invalid_field: str) -> None:
+        """`FormNotValidAssertion` protocol."""
+
+
+@pytest.fixture()
+def assert_form_not_valid() -> FormNotValidAssertion:
+    """Check if a FormView processed the form with errors."""
+    def factory(response: FormViewResponse, invalid_field: str):
+        assert response.status_code == HTTPStatus.OK
+        assert invalid_field in response.context['form'].errors
+    return factory

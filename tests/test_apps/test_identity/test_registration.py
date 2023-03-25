@@ -1,4 +1,3 @@
-from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 import pytest
@@ -10,7 +9,10 @@ pytestmark = pytest.mark.django_db
 
 
 if TYPE_CHECKING:
-    from tests.plugins.django_form_view import FormValidAssertion
+    from tests.plugins.django_form_view import (
+        FormNotValidAssertion,
+        FormValidAssertion,
+    )
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
 
@@ -51,10 +53,10 @@ def test_registration_missing_required_field(
     user_email: str,
     registration_data,
     missing_field: str,
+    assert_form_not_valid: 'FormNotValidAssertion',
 ) -> None:
     """Missing any required field should fail registration process."""
     request_data = registration_data | {missing_field: ''}
     response = client.post('/identity/registration', data=request_data)
-    assert response.status_code == HTTPStatus.OK
-    assert missing_field in response.context['form'].errors
+    assert_form_not_valid(response, missing_field)
     assert not User.objects.filter(email=user_email).exists()
