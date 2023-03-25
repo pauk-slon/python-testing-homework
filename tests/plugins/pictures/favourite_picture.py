@@ -1,8 +1,11 @@
 from typing import Protocol, TypedDict, final
 
 import pytest
+from django_fakery.faker_factory import Factory
 from mimesis.schema import Field, Schema
 from typing_extensions import Unpack
+
+from server.apps.pictures.models import FavouritePicture
 
 
 class FavouritePictureData(TypedDict, total=False):
@@ -47,3 +50,27 @@ def favourite_picture_data(
 ) -> FavouritePictureData:
     """Generates a `FavouritePictureData`."""
     return favourite_picture_data_factory()
+
+
+@final
+class FavouritePictureFactory(Protocol):  # type: ignore[misc]
+    """A factory to generate a `FavouritePicture` instance."""
+
+    def __call__(self, **fields) -> FavouritePicture:
+        """`FavouritePicture` factory protocol."""
+
+
+@pytest.fixture()
+def favourite_picture_factory(
+    fakery: Factory[FavouritePicture],
+    faker_seed: int,
+    default_password: str,
+) -> FavouritePictureFactory:
+    """Creates a factory to generate a `FavouritePicture` instance."""
+    def factory(**fields):
+        return fakery.make(  # type: ignore[call-overload]
+            model=FavouritePicture,
+            fields=fields,
+            seed=faker_seed,
+        )
+    return factory
