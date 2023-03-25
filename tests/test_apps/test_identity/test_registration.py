@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping
 
 import pytest
 from django.http import HttpResponse
@@ -14,17 +14,17 @@ if TYPE_CHECKING:
         FormNotValidAssertion,
         FormValidAssertion,
     )
-    from tests.plugins.identity.user import ProfileAssertion, ProfileData
+    from tests.plugins.identity.user import RawUserDetails, UserDetailsAssertion
 
 
 @pytest.fixture()
 def registration_data(
     user_email: str,
     user_password: str,
-    user_profile_data: 'ProfileData',
-):
+    raw_user_details: 'RawUserDetails',
+) -> Mapping[str, Any]:
     """Raw data for RegistrationForm."""
-    return user_profile_data | {
+    return raw_user_details | {
         'email': user_email,
         'password1': user_password,
         'password2': user_password,
@@ -35,7 +35,7 @@ def test_valid_registration(
     client: Client,
     registration_data,
     assert_form_valid: 'FormValidAssertion',
-    assert_user_profile_correct: 'ProfileAssertion',
+    assert_user_details_correct: 'UserDetailsAssertion',
 ) -> None:
     """Providing valid registration data leads to successful registration."""
     response: HttpResponse = client.post(  # type: ignore[assignment]
@@ -45,7 +45,7 @@ def test_valid_registration(
     assert_form_valid(response, '/identity/login')
     user = User.objects.get(email=registration_data['email'])
     assert user.check_password(registration_data['password1'])
-    assert_user_profile_correct(user, registration_data)
+    assert_user_details_correct(user, registration_data)
 
 
 @pytest.mark.parametrize(

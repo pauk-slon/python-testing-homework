@@ -11,7 +11,7 @@ if TYPE_CHECKING:
         FormNotValidAssertion,
         FormValidAssertion,
     )
-    from tests.plugins.identity.user import ProfileAssertion, ProfileData
+    from tests.plugins.identity.user import RawUserDetails, UserDetailsAssertion
 
 
 pytestmark = pytest.mark.django_db
@@ -20,30 +20,30 @@ pytestmark = pytest.mark.django_db
 def test_valid_update(
     user: User,
     user_client: Client,
-    user_profile_data: 'ProfileData',
+    raw_user_details: 'RawUserDetails',
     assert_form_valid: 'FormValidAssertion',
-    assert_user_profile_correct: 'ProfileAssertion',
+    assert_user_details_correct: 'UserDetailsAssertion',
 ) -> None:
     """Providing valid data should successfully update user details."""
     response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
-        data=user_profile_data,
+        data=raw_user_details,
     )
     assert_form_valid(response, '/identity/update')
     user.refresh_from_db()
-    assert_user_profile_correct(user, user_profile_data)
+    assert_user_details_correct(user, raw_user_details)
 
 
 @pytest.mark.parametrize('missing_field', User.REQUIRED_FIELDS)
 def test_update_missing_required_field(
     user: User,
     user_client: Client,
-    user_profile_data: 'ProfileData',
+    raw_user_details: 'RawUserDetails',
     missing_field: str,
     assert_form_not_valid: 'FormNotValidAssertion',
 ) -> None:
     """Missing any required field should fail editing user details."""
-    request_data = user_profile_data | {missing_field: ''}
+    request_data = raw_user_details | {missing_field: ''}
     response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
         data=request_data,

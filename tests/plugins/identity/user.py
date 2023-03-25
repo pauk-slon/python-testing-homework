@@ -12,8 +12,8 @@ USER_BIRTHDAY_FORMAT = '%Y-%m-%d'  # noqa: WPS323
 
 
 @final
-class ProfileData(TypedDict, total=False):
-    """Raw user profile data."""
+class RawUserDetails(TypedDict, total=False):
+    """Raw user details."""
 
     first_name: str
     last_name: str
@@ -24,10 +24,10 @@ class ProfileData(TypedDict, total=False):
 
 
 @final
-class ProfileDataFactory(Protocol):  # type: ignore[misc]
-    """A factory to generate `ProfileData`."""
+class RawUserDetailsFactory(Protocol):  # type: ignore[misc]
+    """A factory to generate `RawUserDetails`."""
 
-    def __call__(self, **fields: Unpack[ProfileData]) -> ProfileData:
+    def __call__(self, **fields: Unpack[RawUserDetails]) -> RawUserDetails:
         """Profile data factory protocol."""
 
 
@@ -38,8 +38,8 @@ def mf(faker_seed: int) -> Field:
 
 
 @pytest.fixture()
-def user_profile_data_factory(mf) -> ProfileDataFactory:
-    """Returns a factory to generate `ProfileData`."""
+def raw_user_details_factory(mf) -> RawUserDetailsFactory:
+    """Returns a factory to generate a `RawUserDetails` dictionary."""
     schema = Schema(
         schema=lambda: {
             'first_name': mf('person.first_name'),
@@ -58,32 +58,32 @@ def user_profile_data_factory(mf) -> ProfileDataFactory:
 
 
 @pytest.fixture()
-def user_profile_data(
-    user_profile_data_factory: ProfileDataFactory,
-) -> ProfileData:
-    """Generates a new `ProfileData`."""
-    return user_profile_data_factory()
+def raw_user_details(
+    raw_user_details_factory,
+) -> RawUserDetails:
+    """Generates a new `RawUserDetails` dictionary."""
+    return raw_user_details_factory()
 
 
-ProfileAssertion = Callable[[User, ProfileData], None]
+UserDetailsAssertion = Callable[[User, RawUserDetails], None]
 
 
 @pytest.fixture()
-def assert_user_profile_correct() -> ProfileAssertion:
-    """Checks if `ProfileData` corresponds to the given `User` instance."""
-    def factory(user: User, profile_data: ProfileData):
-        assert user.first_name == profile_data['first_name']
-        assert user.last_name == profile_data['last_name']
+def assert_user_details_correct() -> UserDetailsAssertion:
+    """Checks if `RawUserDetails` corresponds to `User`."""
+    def factory(user: User, raw_user_details: RawUserDetails):
+        assert user.first_name == raw_user_details['first_name']
+        assert user.last_name == raw_user_details['last_name']
         if user.date_of_birth:
             formatted_date_of_birth = user.date_of_birth.strftime(
                 USER_BIRTHDAY_FORMAT,
             )
-            assert formatted_date_of_birth == profile_data['date_of_birth']
+            assert formatted_date_of_birth == raw_user_details['date_of_birth']
         else:
-            assert not profile_data['date_of_birth']
-        assert user.address == profile_data['address']
-        assert user.job_title == profile_data['job_title']
-        assert user.phone == profile_data['phone']
+            assert not raw_user_details['date_of_birth']
+        assert user.address == raw_user_details['address']
+        assert user.job_title == raw_user_details['job_title']
+        assert user.phone == raw_user_details['phone']
     return factory
 
 
