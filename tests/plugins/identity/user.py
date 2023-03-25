@@ -140,7 +140,7 @@ def user(
     """The current user.
 
     The fixtures `user_email` and `user_password` are used
-    as their email and password correspondingly.
+    as email and password of the user correspondingly.
     """
     return user_factory(
         email=user_email,
