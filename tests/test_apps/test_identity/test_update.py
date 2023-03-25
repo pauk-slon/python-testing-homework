@@ -24,7 +24,7 @@ def test_valid_update(
     assert_form_valid: 'FormValidAssertion',
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
-    """Tests UserUpdateForm when valid data provided."""
+    """Providing valid data should successfully update user details."""
     response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
         data=user_profile_data,
@@ -42,7 +42,7 @@ def test_update_missing_required_field(
     missing_field: str,
     assert_form_not_valid: 'FormNotValidAssertion',
 ) -> None:
-    """Tests UserUpdateForm when invalid data provided."""
+    """Missing any required field should fail editing user details."""
     request_data = user_profile_data | {missing_field: ''}
     response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
