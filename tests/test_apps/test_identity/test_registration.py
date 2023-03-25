@@ -58,7 +58,7 @@ def test_registration_missing_required_field(
     request_data = registration_data | {missing_field: ''}
     response = client.post('/identity/registration', data=request_data)
     assert_form_not_valid(response, missing_field)
-    assert not User.objects.all().exists()
+    assert not User.objects.exists()
 
 
 @pytest.mark.parametrize(('invalid_field', 'invalid_value'), [
@@ -76,4 +76,4 @@ def test_registration_invalid_field(
     request_data = registration_data | {invalid_field: invalid_value}
     response = client.post('/identity/registration', data=request_data)
     assert_form_not_valid(response, invalid_field)
-    assert not User.objects.all().exists()
+    assert not User.objects.exists()
