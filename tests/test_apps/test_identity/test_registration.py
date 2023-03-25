@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import pytest
+from django.http import HttpResponse
 from django.test import Client
 
 from server.apps.identity.models import User
@@ -12,7 +13,6 @@ if TYPE_CHECKING:
     from tests.plugins.django_form_view import (
         FormNotValidAssertion,
         FormValidAssertion,
-        FormViewResponse,
     )
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
@@ -38,7 +38,7 @@ def test_valid_registration(
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Providing valid registration data leads to successful registration."""
-    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+    response: HttpResponse = client.post(  # type: ignore[assignment]
         '/identity/registration',
         data=registration_data,
     )
@@ -60,7 +60,7 @@ def test_registration_missing_required_field(
 ) -> None:
     """Missing any required field should fail registration process."""
     request_data = registration_data | {missing_field: ''}
-    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+    response: HttpResponse = client.post(  # type: ignore[assignment]
         '/identity/registration',
         data=request_data,
     )
@@ -81,7 +81,7 @@ def test_registration_invalid_field(
 ) -> None:
     """Invalid field value should fail registration process."""
     request_data = registration_data | {invalid_field: invalid_value}
-    response: 'FormViewResponse' = client.post(  # type: ignore[assignment]
+    response: HttpResponse = client.post(  # type: ignore[assignment]
         '/identity/registration',
         data=request_data,
     )

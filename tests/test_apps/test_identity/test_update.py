@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import pytest
+from django.http import HttpResponse
 from django.test import Client
 
 from server.apps.identity.models import User
@@ -9,7 +10,6 @@ if TYPE_CHECKING:
     from tests.plugins.django_form_view import (
         FormNotValidAssertion,
         FormValidAssertion,
-        FormViewResponse,
     )
     from tests.plugins.identity.user import ProfileAssertion, ProfileData
 
@@ -25,7 +25,7 @@ def test_valid_update(
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Tests UserUpdateForm when valid data provided."""
-    response: 'FormViewResponse' = user_client.post(  # type: ignore[assignment]
+    response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
         data=user_profile_data,
     )
@@ -44,7 +44,7 @@ def test_update_missing_required_field(
 ) -> None:
     """Tests UserUpdateForm when invalid data provided."""
     request_data = user_profile_data | {missing_field: ''}
-    response: 'FormViewResponse' = user_client.post(  # type: ignore[assignment]
+    response: HttpResponse = user_client.post(  # type: ignore[assignment]
         '/identity/update',
         data=request_data,
     )
