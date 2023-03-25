@@ -34,7 +34,7 @@ def test_valid_registration(
     registration_data,
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
-    """Tests successful registration."""
+    """Providing valid registration data leads to successful registration."""
     response = client.post('/identity/registration', data=registration_data)
     assert response.status_code == HTTPStatus.FOUND, (
         response.context['form'].errors
@@ -54,7 +54,7 @@ def test_registration_missing_required_field(
     registration_data,
     missing_field: str,
 ) -> None:
-    """Tests RegistrationForm when invalid data provided."""
+    """Missing any required field should fail registration process."""
     request_data = registration_data | {missing_field: ''}
     response = client.post('/identity/registration', data=request_data)
     assert response.status_code == HTTPStatus.OK
