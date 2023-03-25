@@ -50,7 +50,6 @@ def test_valid_registration(
 )
 def test_registration_missing_required_field(
     client: Client,
-    user_email: str,
     registration_data,
     missing_field: str,
     assert_form_not_valid: 'FormNotValidAssertion',
@@ -59,4 +58,22 @@ def test_registration_missing_required_field(
     request_data = registration_data | {missing_field: ''}
     response = client.post('/identity/registration', data=request_data)
     assert_form_not_valid(response, missing_field)
-    assert not User.objects.filter(email=user_email).exists()
+    assert not User.objects.all().exists()
+
+
+@pytest.mark.parametrize(('invalid_field', 'invalid_value'), [
+    ('email', 'invalid@email'),
+    ('date_of_birth', '2000-02-30'),
+])
+def test_registration_invalid_field(
+    client: Client,
+    registration_data,
+    invalid_field: str,
+    invalid_value: str,
+    assert_form_not_valid: 'FormNotValidAssertion',
+) -> None:
+    """Invalid field value should fail registration process."""
+    request_data = registration_data | {invalid_field: invalid_value}
+    response = client.post('/identity/registration', data=request_data)
+    assert_form_not_valid(response, invalid_field)
+    assert not User.objects.all().exists()
