@@ -11,5 +11,5 @@ pytest_plugins = [
     'plugins.django_settings',
     'plugins.django_form_view',
     'plugins.identity.user',
-    # TODO: add your own plugins here!
+    'plugins.pictures.favourite_picture',
 ]
