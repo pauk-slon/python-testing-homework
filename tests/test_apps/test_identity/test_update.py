@@ -17,31 +17,31 @@ pytestmark = pytest.mark.django_db
 
 
 def test_valid_update(
-    admin_client: Client,
-    admin_user: User,
+    user: User,
+    user_client: Client,
     user_profile_data: 'ProfileData',
     assert_form_valid: 'FormValidAssertion',
     assert_user_profile_correct: 'ProfileAssertion',
 ) -> None:
     """Tests UserUpdateForm when valid data provided."""
-    response = admin_client.post('/identity/update', data=user_profile_data)
+    response = user_client.post('/identity/update', data=user_profile_data)
     assert_form_valid(response, '/identity/update')
-    admin_user.refresh_from_db()
-    assert_user_profile_correct(admin_user, user_profile_data)
+    user.refresh_from_db()
+    assert_user_profile_correct(user, user_profile_data)
 
 
 @pytest.mark.parametrize('missing_field', User.REQUIRED_FIELDS)
 def test_update_missing_required_field(
-    admin_client: Client,
-    admin_user: User,
+    user: User,
+    user_client: Client,
     user_profile_data: 'ProfileData',
     missing_field: str,
     assert_form_not_valid: 'FormNotValidAssertion',
 ) -> None:
     """Tests UserUpdateForm when invalid data provided."""
     request_data = user_profile_data | {missing_field: ''}
-    response = admin_client.post('/identity/update', data=request_data)
+    response = user_client.post('/identity/update', data=request_data)
     assert_form_not_valid(response, missing_field)
-    value_before = getattr(admin_user, missing_field)
-    admin_user.refresh_from_db()
-    assert getattr(admin_user, missing_field) == value_before
+    value_before = getattr(user, missing_field)
+    user.refresh_from_db()
+    assert getattr(user, missing_field) == value_before
