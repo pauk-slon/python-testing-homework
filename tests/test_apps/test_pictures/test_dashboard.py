@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 import pytest
@@ -27,3 +28,10 @@ def test_create_favourite_picture_with_valid_data(
     )
     assert_form_valid(response, '/pictures/dashboard')
     assert user.pictures.filter(**favourite_picture_data).exists()
+
+
+def test_dashboard_picture_list(user_client: Client):
+    """Dashboard should contain picture list."""
+    response = user_client.get('/pictures/dashboard')
+    assert response.status_code == HTTPStatus.OK
+    assert response.context['pictures']
