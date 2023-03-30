@@ -30,7 +30,7 @@ class FormValidAssertion(Protocol):
         """`FormValidAssertion` protocol."""
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def assert_form_valid() -> FormValidAssertion:
     """Check if a FormView processed the form successfully."""
     def factory(response: HttpResponse, redirect_url: str):
@@ -47,7 +47,7 @@ class FormNotValidAssertion(Protocol):
         """`FormNotValidAssertion` protocol."""
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def assert_form_not_valid() -> FormNotValidAssertion:
     """Check if a FormView processed the form with errors."""
     def factory(response: HttpResponse, invalid_field: str):

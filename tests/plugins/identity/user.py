@@ -31,7 +31,7 @@ class RawUserDetailsFactory(Protocol):  # type: ignore[misc]
         """Profile data factory protocol."""
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def mf(faker_seed: int) -> Field:
     """Returns the current mimesis `Field`."""
     return Field(seed=faker_seed)
@@ -68,7 +68,7 @@ def raw_user_details(
 UserDetailsAssertion = Callable[[User, RawUserDetails], None]
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def assert_user_details_correct() -> UserDetailsAssertion:
     """Checks if `RawUserDetails` corresponds to `User`."""
     def factory(user: User, raw_user_details: RawUserDetails):
