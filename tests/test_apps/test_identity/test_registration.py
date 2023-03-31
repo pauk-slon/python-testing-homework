@@ -10,6 +10,8 @@ pytestmark = pytest.mark.django_db
 
 
 if TYPE_CHECKING:
+    from plugins.identity.leads import LeadAPIUserResponse, LeadDetailsAssertion
+
     from tests.plugins.django_form_view import (
         FormNotValidAssertion,
         FormValidAssertion,
@@ -31,11 +33,13 @@ def registration_data(
     }
 
 
-def test_valid_registration(
+def test_valid_registration(  # noqa: WPS211
     client: Client,
     registration_data,
+    lead_api_create_user_mock: 'LeadAPIUserResponse',
     assert_form_valid: 'FormValidAssertion',
     assert_user_details_correct: 'UserDetailsAssertion',
+    assert_lead_details_correct: 'LeadDetailsAssertion',
 ) -> None:
     """Providing valid registration data leads to successful registration."""
     response: HttpResponse = client.post(  # type: ignore[assignment]
@@ -46,6 +50,7 @@ def test_valid_registration(
     user = User.objects.get(email=registration_data['email'])
     assert user.check_password(registration_data['password1'])
     assert_user_details_correct(user, registration_data)
+    assert_lead_details_correct(user, lead_api_create_user_mock)
 
 
 @pytest.mark.parametrize(

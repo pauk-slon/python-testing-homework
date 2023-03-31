@@ -11,6 +11,7 @@ pytest_plugins = [
     'plugins.django_auth',
     'plugins.django_settings',
     'plugins.django_form_view',
+    'plugins.identity.leads',
     'plugins.identity.user',
     'plugins.pictures.favourite_picture',
 ]
