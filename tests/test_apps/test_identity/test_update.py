@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import pytest
 from django.http import HttpResponse
@@ -17,12 +17,14 @@ if TYPE_CHECKING:
 pytestmark = pytest.mark.django_db
 
 
-def test_valid_update(
+@pytest.mark.usefixtures('_mock_lead_api_user_update')
+def test_valid_update(  # noqa: WPS211
     user: User,
     user_client: Client,
     raw_user_details: 'RawUserDetails',
     assert_form_valid: 'FormValidAssertion',
     assert_user_details_correct: 'UserDetailsAssertion',
+    assert_lead_api_user_updated: Callable[[User], None],
 ) -> None:
     """Providing valid data should successfully update user details."""
     response: HttpResponse = user_client.post(  # type: ignore[assignment]
@@ -32,6 +34,7 @@ def test_valid_update(
     assert_form_valid(response, '/identity/update')
     user.refresh_from_db()
     assert_user_details_correct(user, raw_user_details)
+    assert_lead_api_user_updated(user)
 
 
 @pytest.mark.parametrize('missing_field', User.REQUIRED_FIELDS)

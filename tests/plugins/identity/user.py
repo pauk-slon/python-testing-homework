@@ -136,6 +136,7 @@ def user(
     user_factory: UserFactory,
     user_email: str,
     user_password: str,
+    mf: Field,
 ) -> User:
     """The current user.
 
@@ -145,5 +146,6 @@ def user(
     return user_factory(
         email=user_email,
         password=user_password,
+        lead_id=mf('numeric.increment'),
         is_active=True,
     )
