@@ -5,6 +5,7 @@ It may be also used for extending doctest's context:
 1. https://docs.python.org/3/library/doctest.html
 2. https://docs.pytest.org/en/latest/doctest.html
 """
+import pytest
 
 pytest_plugins = [
     # Should be the first custom one:
@@ -15,3 +16,9 @@ pytest_plugins = [
     'plugins.identity.user',
     'plugins.pictures.favourite_picture',
 ]
+
+
+@pytest.fixture()
+def _placeholder_api_switch_to_json_server(settings) -> None:
+    """Sets PLACEHOLDER_API_URL to URL of json-server."""
+    settings.PLACEHOLDER_API_URL = 'http://json-server/'
