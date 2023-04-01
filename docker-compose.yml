@@ -9,6 +9,20 @@
 
 version: "3.8"
 services:
+  json-server:
+    image: "clue/json-server"
+    volumes:
+      - ./tests/json-server:/data/
+    networks:
+      - webnet
+    ports:
+      - "8081:80"
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost"]
+      timeout: 5s
+      interval: 10s
+      retries: 5
+      start_period: 20s
   db:
     image: "postgres:13-alpine"
     volumes:
@@ -37,6 +51,7 @@ services:
         - django-static:/var/www/django/static
       depends_on:
         - db
+        - json-server
       networks:
         - webnet
         - postgresnet

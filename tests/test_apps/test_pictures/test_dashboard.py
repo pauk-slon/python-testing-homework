@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING
+from http import HTTPStatus
+from typing import TYPE_CHECKING, Final
 
 import pytest
 from django.http import HttpResponse
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
 
 
 pytestmark = pytest.mark.django_db
+JSON_SERVER_NUM_OF_PICTURES: Final[int] = 1
 
 
 def test_create_favourite_picture_with_valid_data(
@@ -27,3 +29,11 @@ def test_create_favourite_picture_with_valid_data(
     )
     assert_form_valid(response, '/pictures/dashboard')
     assert user.pictures.filter(**favourite_picture_data).exists()
+
+
+@pytest.mark.usefixtures('_placeholder_api_switch_to_json_server')
+def test_dashboard_picture_list(user_client: Client):
+    """Dashboard should contain picture list came from json-server."""
+    response = user_client.get('/pictures/dashboard')
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.context['pictures']) == JSON_SERVER_NUM_OF_PICTURES
